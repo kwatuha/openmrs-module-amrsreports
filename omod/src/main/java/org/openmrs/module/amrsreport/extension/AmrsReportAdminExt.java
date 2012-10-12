@@ -43,6 +43,9 @@ public class AmrsReportAdminExt extends AdministrationSectionExt {
 		if (Context.hasPrivilege(ReportingConstants.PRIV_VIEW_REPORTS)) {
 			map.put("module/amrsreport/mohHistory.form", "View AMRS Reports");
 		}
+        if (Context.hasPrivilege(ReportingConstants.PRIV_VIEW_REPORTS)) {
+            map.put("module/amrsreport/mohReportUser.form", "View Privileges");
+        }
 
 		return map;
 	}

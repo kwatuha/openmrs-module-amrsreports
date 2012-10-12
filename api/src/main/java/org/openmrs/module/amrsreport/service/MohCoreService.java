@@ -178,4 +178,5 @@ public interface MohCoreService extends OpenmrsService {
 	 * @return list of allowed reports
 	 */
 	public List<ReportDefinition> getAllowedReportDefinitionsForUser(User user);
+    public List<UserReport> getAllUserReports();
 }

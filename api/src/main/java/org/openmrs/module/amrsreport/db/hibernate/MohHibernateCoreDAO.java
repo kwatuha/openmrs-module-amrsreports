@@ -334,4 +334,10 @@ public class MohHibernateCoreDAO implements MohCoreDAO {
 			.add(Restrictions.eq("amrsReportsUser", user));
 		return (List<UserReport>) crit.list();
 	}
+    @Override
+    public List<UserReport> getAllUserReports() {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserReport.class);
+        return criteria.list();
+
+    }
 }

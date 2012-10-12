@@ -168,4 +168,10 @@ public class MohCoreServiceImpl extends BaseOpenmrsService implements MohCoreSer
 		}
 		return definitions;
 	}
+    @Override
+    public List<UserReport> getAllUserReports(){
+        return mohCoreDAO.getAllUserReports();
+    }
+
+
 }

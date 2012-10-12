@@ -66,4 +66,5 @@ public interface MohCoreDAO {
 	public List<UserLocation> getUserLocationsForUser(User user);
 
 	public List<UserReport> getUserReportsForUser(User user);
+    public List<UserReport> getAllUserReports();
 }
