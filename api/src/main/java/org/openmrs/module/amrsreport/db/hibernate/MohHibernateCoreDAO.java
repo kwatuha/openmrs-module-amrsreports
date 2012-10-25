@@ -301,9 +301,10 @@ public class MohHibernateCoreDAO implements MohCoreDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void purgeUserReport(UserReport userReport) {
-		sessionFactory.getCurrentSession().delete(userReport);
-	}
+    public UserReport deleteUserReport(UserReport userReport) throws DAOException {
+        sessionFactory.getCurrentSession().delete(userReport);
+        return null;
+    }
 
 	/**
 	 * UserLocation methods

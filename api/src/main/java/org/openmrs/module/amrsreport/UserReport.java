@@ -7,6 +7,7 @@ public class UserReport extends BaseOpenmrsObject {
 
 	private User amrsReportsUser;
 	private String reportDefinitionUuid;
+    private String reportDefinitionName;
 	private Integer userReportId;
 
 	public User getAmrsReportsUser() {
@@ -24,8 +25,16 @@ public class UserReport extends BaseOpenmrsObject {
 	public void setReportDefinitionUuid(String reportDefinitionUuid) {
 		this.reportDefinitionUuid = reportDefinitionUuid;
 	}
+    public String getReportDefinitionName() {
+        return reportDefinitionName;
+    }
 
-	public Integer getUserReportId() {
+    public void setReportDefinitionName(String reportDefinitionName) {
+        this.reportDefinitionName= reportDefinitionName;
+    }
+
+
+    public Integer getUserReportId() {
 		return userReportId;
 	}
 

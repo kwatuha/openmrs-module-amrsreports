@@ -21,6 +21,7 @@ import org.openmrs.Location;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.reporting.report.ReportData;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
 import org.openmrs.util.OpenmrsUtil;
@@ -53,21 +54,22 @@ public class MohReportUserController {
         map.addAttribute("sysusers",listUsers) ;
         List<UserReport>listOfUserReports =service.getAllUserReports();
         map.addAttribute("listUserReports",listOfUserReports) ;
-        ReportDefinitionService rds = Context.getService(ReportDefinitionService.class);
-        List<ReportDefinition> rptDefinitions = rds.getAllDefinitions(false);
 
-        map.addAttribute("listReports",rptDefinitions) ;
 
-    }
+        // Get list of existing reports
+        //getAllowedReportDefinitionsForUser(User user);
+        boolean includeRet = (includeRetired == Boolean.TRUE);
+        List<ReportDefinition> reportDefinitions = Context.getService(ReportDefinitionService.class).getAllDefinitions(includeRet);
 
-    @RequestMapping(method = RequestMethod.POST, value = "module/amrsreport/mohRender.form")
-    public void processForm(ModelMap map, HttpServletRequest request,
-                            @RequestParam(required = false, value = "rptdefinition ") String rptdefinitionuuid,
-                            @RequestParam(required = true, value = "systemusers") String sytemUseId) {
-        ReportDefinitionService rds = Context.getService(ReportDefinitionService.class);
-        List<ReportDefinition> rptDefinitions = rds.getAllDefinitions(false);
-
-    }
-
+        map.addAttribute("reportDefinitions", reportDefinitions);
+        map.addAttribute("userreportcount", listOfUserReports.size());
+        User authenticatedUser = Context.getAuthenticatedUser();
+        List<ReportDefinition> currentUserDefitinions =service.getAllowedReportDefinitionsForUser(authenticatedUser) ;
+        map.addAttribute("userReportDefinitions", currentUserDefitinions);
+        map.addAttribute("authuser",authenticatedUser);
 
     }
+
+
+
+}

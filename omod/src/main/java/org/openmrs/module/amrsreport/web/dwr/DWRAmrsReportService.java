@@ -7,6 +7,8 @@ import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.util.MimeConstants;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.util.FileCopyUtils;
 
@@ -17,6 +19,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Iterator;
+
+import org.openmrs.User;
+import org.openmrs.module.amrsreport.UserReport;
+import org.openmrs.module.amrsreport.service.MohCoreService;
 
 /**
  * Created with IntelliJ IDEA.
@@ -184,5 +191,43 @@ public class DWRAmrsReportService {
             str = str.substring(0, str.length() - 1);
         }
         return str;
+    }
+
+    public String saveUserReports(String report, Integer user){
+
+        MohCoreService service = Context.getService(MohCoreService.class);
+
+        //Create a sample User
+
+        User systemUser = new User();
+        systemUser.setUserId(user);
+
+        //Report definition user name
+        ReportDefinitionService rds = Context.getService(ReportDefinitionService.class);
+
+        ReportDefinition rpt=rds.getDefinitionByUuid(report);
+        //save user
+        String rptDefinitionName= rpt.getName();
+        UserReport userrpt = new UserReport();
+        userrpt.setAmrsReportsUser(systemUser);
+        userrpt.setReportDefinitionUuid(report);
+        userrpt.setReportDefinitionName(rptDefinitionName);
+        service.saveUserReport(userrpt);
+
+        return "record saved" ;
+    }
+
+    public List<java.lang.Integer> revokeUserPrivileges(List<java.lang.Integer> privileges ){
+        MohCoreService service = Context.getService(MohCoreService.class);
+
+
+        Iterator<Integer> iterator = privileges.iterator();
+        while (iterator.hasNext()) {
+            UserReport userrpt = service.getUserReport(iterator.next());
+            service.purgeUserReport(userrpt);
+
+
+        }
+         return   privileges;
     }
 }

@@ -139,7 +139,7 @@ public interface MohCoreService extends OpenmrsService {
 
 	public UserReport getUserReport(Integer userReportId);
 
-	public void purgeUserReport(UserReport userReport);
+    public UserReport purgeUserReport(UserReport userReport) throws APIException;
 
 	public UserReport getUserReportByUuid(String uuid);
 

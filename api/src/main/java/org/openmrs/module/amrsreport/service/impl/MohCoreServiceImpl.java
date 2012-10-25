@@ -120,9 +120,9 @@ public class MohCoreServiceImpl extends BaseOpenmrsService implements MohCoreSer
 	}
 
 	@Override
-	public void purgeUserReport(UserReport userReport) {
-		mohCoreDAO.purgeUserReport(userReport);
-	}
+   public UserReport purgeUserReport(UserReport userReport) throws APIException {
+        return mohCoreDAO.deleteUserReport(userReport);
+    }
 
 	@Override
 	public UserReport getUserReportByUuid(String uuid) {

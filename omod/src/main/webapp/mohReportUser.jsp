@@ -1,62 +1,138 @@
-<%@ include file="/WEB-INF/template/include.jsp"%>
+    <%@ include file="/WEB-INF/template/include.jsp"%>
+        <%@ include file="/WEB-INF/template/header.jsp"%>
 
-<openmrs:require privilege="View HL7 Inbound Queue"
-                 otherwise="/login.htm" redirect="module/reprocesshl7error/hl7Reprocess.htm" />
+        <%@ include file="localHeader.jsp"%>
 
-<%@ include file="/WEB-INF/template/header.jsp"%>
+        <openmrs:htmlInclude file="/dwr/util.js"/>
+        <openmrs:htmlInclude file="/scripts/jquery/dataTables/css/dataTables.css" />
+        <openmrs:htmlInclude file="/moduleResources/amrsreport/jquery.dataTables.min.js" />
+        <openmrs:htmlInclude file="/moduleResources/amrsreport/jquery.tools.min.js" />
+        <openmrs:htmlInclude file="/moduleResources/amrsreport/css/dataTables_jui.css" />
 
-<openmrs:htmlInclude file="/scripts/jquery/highlight/jquery.highlight-3.js" />
-<openmrs:htmlInclude file="/scripts/jquery/dataTables/js/jquery.dataTables.min.js" />
-<openmrs:htmlInclude file="/scripts/jquery/dataTables/js/jquery.dataTables.filteringDelay.js" />
-<openmrs:htmlInclude file="/scripts/jquery-ui/js/jquery-ui.custom.min.js" />
-<link href="<openmrs:contextPath/>/scripts/jquery-ui/css/<spring:theme code='jqueryui.theme.name' />
-<jquery-ui.custom.css" type="text/css" rel="stylesheet" />
-<openmrs:htmlInclude file="/scripts/jquery/dataTables/css/dataTables.css" />
-<openmrs:htmlInclude file="/scripts/jquery/dataTables/css/dataTables_jui.css" />
-<!-- dwr include -->
-<openmrs:htmlInclude file="dwr/interface/DWRTESTService.js" />
-<form method="POST" id="frmMohReportUser">
-    <table border="1">
-        <tr><th><tr><td>Address </td><td><input type="text" id="address"name="address"> </td></tr>
-        <tr><th><tr><t>Select User</t> </td><td>
-        <select name="systemusers" id="systemusers">
-            <c:forEach var="listsysusers" items="${sysusers}">
-                <option id="${listsysusers.userId}"
-                        value="${listsysusers.userId}">
-                    ${listsysusers.username}</option>
-            </c:forEach>
-        </select>
-</td></tr>
+        <openmrs:htmlInclude file="/dwr/interface/DWRAmrsReportService.js"/>
 
 
+        <script type="text/javascript">
+        var selectedRpts=[];
+        $j(document).ready(function(){
+        var oTable = $j("#rptuserreportdt").dataTable();
+       });
+        </script>
+
+        <script type="text/javascript">
+        var userReports=new Array();
+        var checkifselected='';
+        $j(document).ready(function(){
+
+        $j("#revokePrivSelBtn").click(function(){
+
+        DWRAmrsReportService.revokeUserPrivileges(userReports,callbackfuncArr );
+        });
+
+
+        $j("#saverptuser").click(function(){
+        var  userid=$j("#systemusers").val();
+        var reportuuid=$j("#rptDefitionctl").val();
+           if((userid>0) && (reportuuid>0)){
+        DWRAmrsReportService.saveUserReports(reportuuid,userid,callbackfunc);
+        }
+
+
+        });
+
+        function callbackfunc(data){
+        alert(data);
+        }
+
+        function callbackfuncArr(data){
+            $j.each( data, function(index, value) {
+            alert(index + ': ' + value);
+            });
+        }
+        });
+
+        function showMyItem(myitem,ischecked){
+
+        if(ischecked==true) {
+        userReports.push(myitem);
+
+        }else{
+        userReports= $j.grep(userReports, function(value) {
+        return value != myitem;
+        });
+        }
+        }
+       </script>
+        <b class="boxHeader">Assign Reports Users</b>
+        <div class="box" style=" width:99%; height:auto;  overflow-x: auto;">
+        <table>
         <tr>
-            <td><b>Location:</b></td>
-            <td><select name="rptdefinition"">
-                <c:forEach var="listrpts" items="${listReports}" >
-                    <option  value="${listReports.uuid}" >${listReports.name}</option>
-                </c:forEach>
-                </select>
-            </td>
+        <td>Report</td>
+        <td>
+        <select id="rptDefitionctl" name="definition">
+        <option  value="0">Select Report Definition</option>
+        <c:forEach var="rptdefinition" items="${reportDefinitions}">
+        <option  value="${rptdefinition.uuid}" >${rptdefinition.name}</option>
+        </c:forEach>
+        </select>
+        </td>
+
+        </tr>
+        <tr>
+        <td>Select User</td>
+        <td>
+        <select name="systemusers" id="systemusers">
+        <option  value="0">Select Report User</option>
+        <c:forEach var="listsysusers" items="${sysusers}">
+        <option id="${listsysusers.userId}"
+        value="${listsysusers.userId}">
+        ${listsysusers.username}</option>
+        </c:forEach>
+        </select>
+        </td>
+
+        </tr>
+        <tr>
+
+        <td>
+        &nbsp;
+
+        </td>
+        <td>
+        <input type="submit" value="Save" id="saverptuser">
+
+        </td>
+        </tr>
+        </table>
+        </div>
+
+         <p></p>
+        <b class="boxHeader">Assigned Report Privileges</b>
+        <div class="box" style=" width:95%; height:auto;  overflow-x: auto;">
+        <input id="revokePrivSelBtn" type="button" value="Revoke privileges" />
+        <table id="rptuserreportdt" align="left" width="95%">
+        <thead>
+        <tr>
+
+        <th>Report</th>
+        <th>User</th>
+
+        <th>&nbsp;</th>
+        </tr>
+        </thead>
+        <tbody>
+        <c:forEach var="listreports" items="${listUserReports}">
+        <tr>
+        <td><input type="checkbox" value="${listreports.id}"  onClick="showMyItem(this.value,this.checked)"></td>
+        <td>${listreports.reportDefinitionUuid} &nbsp-> ${listreports.reportDefinitionName} </td>
+        <td>${listreports.amrsReportsUser.username}</td>
         </tr>
 
+        </c:forEach>
+        </tbody>
+        </table>
 
-    </table></form>
-<table cellpadding="5" width="100%" id="alphaNutritionAllocationdt">
-    <thead>
-    <tr>
-    <th class="tdClass">User</th><th class="tbClass">User</th>
-    <th class="tbClass">Report </th>
-    <tbody>
-    <c:forEach var="listUserReports" items="${listUserReports}" varStatus="encIndex" >
-        <form method="POST" name="${listUserReports.uuid}">
-            <tr>
-                <td class="tdClass">${encIndex.index + 1}</td>
-                <td class="tbClass">${listUserReports.reportDefinitionUuid}</td>
-                <td class="tbClass">${listUserReports.amrsReportsUser.username}</td>
+        </div>
 
-                </td>
-            </tr>
-        </form>
-    </c:forEach>
-    </tbody>
-</table>
+
+

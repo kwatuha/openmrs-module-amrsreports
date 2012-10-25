@@ -52,7 +52,7 @@ public interface MohCoreDAO {
 
 	public UserReport getUserReport(Integer userReportId);
 
-	public void purgeUserReport(UserReport userReport);
+    public UserReport deleteUserReport(UserReport userReport) throws DAOException;
 
 	public UserReport getUserReportByUuid(String uuid);
 

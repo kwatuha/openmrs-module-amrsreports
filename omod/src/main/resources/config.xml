@@ -67,7 +67,11 @@
 				<include method="viewMoreDetailsRender"/>
 				<include method="downloadCSV"/>
 				<include method="downloadPDF"/>
-			</create>
+               <include method="saveUserReports"/>
+                <include method="revokeUserPrivileges"/>
+            </create>
+            <convert match="org.openmrs.module.amrsreport.UserReport"   converter="bean"  />
+            <convert match="org.openmrs.User"   converter="bean"  />
 		</allow>
 
 		<signatures>
@@ -77,6 +81,10 @@
 			DWRAmrsReportService.viewMoreDetailsRender(String bff,String id);
 			DWRAmrsReportService.downloadCSV(String csvFile);
 			DWRAmrsReportService.downloadPDF(String file);
+			DWRAmrsReportService.saveUserReports(String report, Integer user);
+			DWRAmrsReportService.revokeUserPrivileges(List<java.lang.Integer> privileges );
+
+
 			]]>
 		</signatures>	
 	</dwr>
