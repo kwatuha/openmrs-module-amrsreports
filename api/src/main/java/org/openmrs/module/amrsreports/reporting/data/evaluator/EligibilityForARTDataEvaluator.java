@@ -14,15 +14,13 @@ import org.openmrs.module.reporting.common.ListMap;
 import org.openmrs.module.reporting.data.person.EvaluatedPersonData;
 import org.openmrs.module.reporting.data.person.definition.PersonDataDefinition;
 import org.openmrs.module.reporting.data.person.evaluator.PersonDataEvaluator;
+import org.openmrs.module.reporting.data.person.service.PersonDataService;
 import org.openmrs.module.reporting.dataset.query.service.DataSetQueryService;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
+import org.openmrs.module.amrsreports.reporting.data.DateARTStartedDataDefinition;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Evaluator for ART Eligibility
@@ -104,7 +102,18 @@ public class EligibilityForARTDataEvaluator implements PersonDataEvaluator {
 					}
 				}
 			}
-			c.addData(pId, snapshot);
+
+            Date lastDate = (Date)snapshot.get("lastDate");
+            EvaluatedPersonData epd = Context.getService(PersonDataService.class).evaluate(new DateARTStartedDataDefinition(), context);
+            Date artStartDate = (Date)epd.getData().values();
+
+
+            if(lastDate.after(artStartDate)){
+                c.addData(pId, null);
+            }
+            else{
+                c.addData(pId, snapshot);
+            }
 		}
 
 		return c;
