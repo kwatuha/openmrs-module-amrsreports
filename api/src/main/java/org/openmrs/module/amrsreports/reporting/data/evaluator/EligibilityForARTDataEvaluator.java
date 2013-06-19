@@ -20,7 +20,12 @@ import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.amrsreports.reporting.data.DateARTStartedDataDefinition;
 
-import java.util.*;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Date;
 
 /**
  * Evaluator for ART Eligibility
@@ -99,21 +104,21 @@ public class EligibilityForARTDataEvaluator implements PersonDataEvaluator {
 					snapshot.setAgeGroup(MOHReportUtil.getAgeGroupAtDate(p.getBirthdate(), o.getObsDatetime()));
 					if (snapshot.eligible()) {
 						done = true;
+
+                        Date lastDate = (Date)snapshot.get("lastDate");
+                        EvaluatedPersonData epd = Context.getService(PersonDataService.class).evaluate(new DateARTStartedDataDefinition(), context);
+                        Date artStartDate = (Date)epd.getData().get(pId);
+
+                        if(lastDate.after(artStartDate)){
+                            snapshot.set("lastDate",null) ;
+                            snapshot.set("reason", null) ;
+                        }
 					}
 				}
 			}
 
-            Date lastDate = (Date)snapshot.get("lastDate");
-            EvaluatedPersonData epd = Context.getService(PersonDataService.class).evaluate(new DateARTStartedDataDefinition(), context);
-            Date artStartDate = (Date)epd.getData().values();
+            c.addData(pId, snapshot);
 
-
-            if(lastDate.after(artStartDate)){
-                c.addData(pId, null);
-            }
-            else{
-                c.addData(pId, snapshot);
-            }
 		}
 
 		return c;
